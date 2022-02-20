@@ -8,7 +8,7 @@ This library assumes `typeof` exists, specifically it relies on `typeof(type)`. 
 # The MapDecl macro
 Declares a map using the given name and types. In each translation unit MapDecl shall only be called once for each name provided, duplicate calls are never allowed. MapDecl invocations which use the same name shall all be equivalent.
 
-This macro shan't be used inside of a function.
+This macro shall only be used at the global scope.
 
 ## Synopsis
 ```c
@@ -25,7 +25,7 @@ This macro declares all types, structures, and functions later described.
 # The MapDef macro
 Defines a map using the given name and functions. MapDef shall only be called once for each name provided, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation of MapDef with the same name somewhere.
 
-This macro shan't be used inside of a function.
+This macro shall only be used at the global scope.
 
 ## Synopsis
 ```c

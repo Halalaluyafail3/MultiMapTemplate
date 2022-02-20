@@ -6,7 +6,9 @@ The header defines two macros and includes the headers `stdint.h` and `stddef.h`
 This library assumes `typeof` exists, specifically it relies on `typeof(type)`. If `typeof` is not provided by your compiler, it should be defined as a macro which calls your compiler's version of `typeof`. If `typeof` is defined as `#define typeof(...)__VA_ARGS__` (because `typeof` is not supported) or something equivalent, then the type provided as the type of the keys shall be specified such that the type of a pointer to a key can be obtained by postfixing a `*` to the type of the keys.
 
 # The MapDecl macro
-Declares a map using the given name and types. In each translation unit MapDecl shall only be called once for each name provided, duplicate calls are never allowed.
+Declares a map using the given name and types. In each translation unit MapDecl shall only be called once for each name provided, duplicate calls are never allowed. MapDecl invocations which use the same name shall all be equivalent.
+
+This macro shan't be used inside of a function.
 
 ## Synopsis
 ```c
@@ -14,17 +16,32 @@ Declares a map using the given name and types. In each translation unit MapDecl 
 ```
 
 ## Description
-`Name` is used to identify different maps, all globally declared entities will use it as a suffix.
-`Key` is the type of the keys, which shall be a complete object type other than an array type.
+`Name` is used to identify different maps, all globally declared entities will use it as a suffix.<br>
+`Key` is the type of the keys, which shall be a complete object type other than an array type.<br>
 `Val` and `Extra` are both series of declarations which shall be valid inside of a `struct`, but no flexible array members may be specified.
 
 # The MapDef macro
-Defines a map using the given name and functions. MapDef shall only be called once for each name provided, duplicate calls are never allowed, even in seperate translation units.
+Defines a map using the given name and functions. MapDef shall only be called once for each name provided, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation to MapDef with the same name.
+
+This macro shan't be used inside of a function.
 
 ## Synopsis
 ```c
 #define MapDef(Name,Hash,Cmp,Alloc,Free) /* ... */
 ```
+
+## Description
+`Name` is used to identify different maps, all globally defined entities will use it as a suffix.<br>
+`Hash`, `Cmp`, `Alloc`, and `Free` shall all be macro names or function names which take the following arguments:<br>
+`Hash`: A key, and a pointer to a map<br>
+`Cmp`: Two keys, and a pointer to a map<br>
+`Alloc`: A `size_t`, and a pointer to a map<br>
+`Free`: A pointer implicitly convertible to `void*`, and a pointer to a map<br>
+They shall also return the following types:<br>
+`Hash`: A `size_t`<br>
+`Cmp`: A value which is valid for an `if` condition<br>
+`Alloc`: A `void*`<br>
+`Free`: Any type, even incomplete types such as `void`
 
 # Example
 ```c

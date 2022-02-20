@@ -20,6 +20,8 @@ This macro shan't be used inside of a function.
 `Key` is the type of the keys, which shall be a complete object type other than an array type.<br>
 `Val` and `Extra` are both series of declarations which shall be valid inside of a `struct`, but no flexible array members may be specified.
 
+This macro declares all types, structures, and functions later described.
+
 # The MapDef macro
 Defines a map using the given name and functions. MapDef shall only be called once for each name provided, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation to MapDef with the same name.
 
@@ -42,6 +44,8 @@ They shall also return the following types:<br>
 `Cmp`: A value which is valid for an `if` condition<br>
 `Alloc`: A `void*`<br>
 `Free`: Any type, even incomplete types such as `void`
+
+This macro defines all functions declared by `MapDecl`.
 
 # Example
 ```c

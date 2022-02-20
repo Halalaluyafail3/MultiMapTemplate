@@ -47,6 +47,14 @@ They shall also return the following types:<br>
 
 This macro defines all functions declared by `MapDecl`.
 
+# Reserved Identifiers
+
+This header reserves all identifiers beginning with `MapRESERVED__` in all contexts.
+
+All function, type, and structure names declared by calls to MapDecl shall not be used as macro names or declared globally.
+
+The names of predefined structure members shall not be defined as macros.
+
 # Example
 ```c
 #include<stdio.h>

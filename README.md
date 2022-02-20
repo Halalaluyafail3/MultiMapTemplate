@@ -23,7 +23,7 @@ This macro shan't be used inside of a function.
 This macro declares all types, structures, and functions later described.
 
 # The MapDef macro
-Defines a map using the given name and functions. MapDef shall only be called once for each name provided, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation to MapDef with the same name.
+Defines a map using the given name and functions. MapDef shall only be called once for each name provided, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation to MapDef with the same name somewhere.
 
 This macro shan't be used inside of a function.
 

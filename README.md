@@ -79,6 +79,10 @@ void MapClear_##Name(Map_##Name*);
 ## Desciption
 Clears all entries in the map, which will release all resources associated with the Map. An empty map is always one without any resources to free.
 
+# Pointer Lifetime
+A pointer to an entry will exist for as long as the entry exists.<br>
+A pointer to a pointer to an entry will exist until a key is added or removed.
+
 # Reserved Identifiers
 
 This header reserves all identifiers beginning with `MapRESERVED__` in all contexts.

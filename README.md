@@ -46,7 +46,7 @@ They shall also return the following types:<br>
 `Alloc`: A `void*`<br>
 `Free`: Any type, even incomplete types such as `void`
 
-When `Hash`, `Cmp`, `Alloc`, or `Free` are provided as macros they shall be fully protected by parentheses, and evaluate each of their arguments exactly once except for the pointer to map argument.
+When `Hash`, `Cmp`, `Alloc`, or `Free` are provided as macros they shall be fully protected by parentheses, and evaluate each of their arguments exactly once except for the pointer to map argument which may be evaluated any number of times.
 
 This macro defines all functions declared by `MapDecl`.
 

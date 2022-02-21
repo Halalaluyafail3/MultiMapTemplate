@@ -67,7 +67,23 @@ MapDef shall only be called once per name, duplicate calls are never allowed, ev
 
 # The MapLocate_##Name function
 
+## Synopsis
+```c
+MapEntry_##Name**MapLocate_##Name(Map_##Name*,MapEntry_##Name*);
+```
+
+## Description
+Finds the pointer to a pointer to an entry from a pointer to an entry. The entry provided must be from the map provided.
+
 # The MapRemove_##Name function
+
+## Synopsis
+```c
+void MapRemove_##Name(Map_##Name*,MapEntry_##Name**);
+```
+
+## Description
+Removes the entry from the map. The entry provided must be from the map provided.
 
 # The MapClear_##Name function
 

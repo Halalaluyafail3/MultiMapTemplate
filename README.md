@@ -6,9 +6,7 @@ The header defines two macros and includes the headers `stdint.h` and `stddef.h`
 This library assumes `typeof` exists, specifically it relies on `typeof(type)`. If `typeof` is not provided by your compiler, it should be defined as a macro which calls your compiler's version of `typeof`. If `typeof` is defined as `#define typeof(...)__VA_ARGS__` (because `typeof` is not supported) or something equivalent, then the type provided as the type of the keys shall be specified such that the type of a pointer to a key can be obtained by postfixing a `*` to the type of the keys.
 
 # The MapDecl macro
-Declares a map using the given name and types. In each translation unit MapDecl shall only be called once for each name provided, duplicate calls are never allowed. MapDecl invocations which use the same name shall all be equivalent.
-
-This macro shall only be used at the global scope.
+Declares a map using the given name and types.
 
 ## Synopsis
 ```c
@@ -22,8 +20,13 @@ This macro shall only be used at the global scope.
 
 This macro declares all types, structures, and functions later described.
 
+## Constraints
+In each translation unit MapDecl shall only be called once per name, duplicate calls are never allowed. MapDecl invocations which use the same name shall all be equivalent.
+
+This macro shall only be used at the global scope.
+
 # The MapDef macro
-Defines a map using the given name and functions. MapDef shall only be called once for each name provided, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation of MapDef with the same name somewhere.
+Defines a map using the given name and functions.
 
 This macro shall only be used at the global scope.
 
@@ -46,6 +49,9 @@ They shall also return the following types:<br>
 `Free`: Any type, even incomplete types such as `void`
 
 This macro defines all functions declared by `MapDecl`.
+
+## Constraints
+MapDef shall only be called once per name, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation of MapDef with the same name somewhere.
 
 # Reserved Identifiers
 

@@ -21,6 +21,8 @@ Declares a map using the given name and types.
 This macro declares all types, structures, and functions later described.
 
 ## Constraints
+The objects declared by `Val` and `Extra` shall not have names which conflict with the predefined names of the structs that they are in.
+
 In each translation unit MapDecl shall only be called once per name, duplicate calls are never allowed. MapDecl invocations which use the same name shall all be equivalent.
 
 This macro shall only be used at the global scope.

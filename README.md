@@ -1,7 +1,7 @@
 # MultiMapTemplate
 A header only multimap library using macros in C.
 
-The header defines the two macros MapDecl and MapDef and includes the headers `stdint.h` and `stddef.h`.
+The header defines the two macros `MapDecl` and `MapDef` and includes the headers `stdint.h` and `stddef.h`.
 
 This library assumes `typeof` exists, specifically it relies on `typeof(type)`. If `typeof` is not provided by your compiler, it should be defined as a macro which calls your compiler's version of `typeof`. If `typeof` is defined as `#define typeof(...)__VA_ARGS__` (because `typeof` is not supported) or something equivalent, then the type provided as the type of the keys shall be specified such that the type of a pointer to a key can be obtained by postfixing a `*` to the type of the keys.
 

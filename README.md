@@ -71,6 +71,14 @@ MapDef shall only be called once per name, duplicate calls are never allowed, ev
 
 # The MapClear_##Name function
 
+## Synopsis
+```c
+void MapClear_##Name(Map_##Name*);
+```
+
+## Desciption
+Clears all entries in the map, which will release all resources associated with the Map. An empty map is always one without any resources to free.
+
 # Reserved Identifiers
 
 This header reserves all identifiers beginning with `MapRESERVED__` in all contexts.

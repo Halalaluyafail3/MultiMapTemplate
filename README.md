@@ -28,8 +28,6 @@ This macro shall only be used at the global scope.
 # The MapDef macro
 Defines a map using the given name and functions.
 
-This macro shall only be used at the global scope.
-
 ## Synopsis
 ```c
 #define MapDef(Name,Hash,Cmp,Alloc,Free) /* ... */
@@ -54,6 +52,8 @@ This macro defines all functions declared by `MapDecl`.
 
 ## Constraints
 MapDef shall only be called once per name, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation of MapDef with the same name somewhere.
+
+This macro shall only be used at the global scope.
 
 # The Map_##Name type and structure
 

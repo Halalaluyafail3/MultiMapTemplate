@@ -46,6 +46,9 @@ They shall also return the following types:<br>
 `Alloc`: A `void*`<br>
 `Free`: Any type, even incomplete types such as `void`
 
+This macro defines all functions declared by `MapDecl`.
+
+## Constraints
 When `Hash`, `Cmp`, `Alloc`, or `Free` are provided as macros they shall be fully protected by parentheses, and evaluate each of their arguments exactly once except for the pointer to map argument which may be evaluated any number of times.
 
 There are some restrictions on the functions or macros provided:<br>
@@ -55,9 +58,6 @@ There are some restrictions on the functions or macros provided:<br>
 
 For keys which are never passed to `MapAdd_##Name` or `MapFind_##Name` whether they make sense in `Hash` or `Cmp` need not be considered, e.g. with float keys if NaN is never inserted then `Cmp` need not make sure that NaN compares equal to NaN.
 
-This macro defines all functions declared by `MapDecl`.
-
-## Constraints
 MapDef shall only be called once per name, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation of MapDef with the same name somewhere.
 
 This macro shall only be used at the global scope.

@@ -48,6 +48,13 @@ They shall also return the following types:<br>
 
 When `Hash`, `Cmp`, `Alloc`, or `Free` are provided as macros they shall be fully protected by parentheses, and evaluate each of their arguments exactly once except for the pointer to map argument which may be evaluated any number of times.
 
+There are some restrictions on the functions or macros provided:<br>
+`Hash`: All keys passed to `MapAdd_##Name` and `MapFind_##Name` shall be valid to pass to `Hash`, and the return value shall never change<br>
+`Cmp`: All keys passed to `MapAdd_#Name` and `MapFind_##Name` shall be valid to pass as one of the arguments, the return value shall never change for equivalent calls, and it should define a normal equality comparison (the reflexive, symmetric, and transitive properties shall all be upheld)
+`Alloc`: If the pointer returned, it shall be valid until `Free` is called for the pointer.
+
+For keys which are never passed to `MapAdd_##Name` or `MapFind_##Name` whether they make sense in `Hash` or `Cmp` need not be considered, e.g. with float keys if NaN is never inserted then `Cmp` need not make sure that NaN compares equal to NaN.
+
 This macro defines all functions declared by `MapDecl`.
 
 ## Constraints

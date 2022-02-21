@@ -63,9 +63,33 @@ This macro shall only be used at the global scope.
 
 # The MapFind_##Name function
 
+## Synopsis
+```c
+MapEntry_##Name**MapFind_##Name(Map_##Name*,MapKey_##Name);
+```
+
+## Description
+Finds an entry with the key provided, if there are multiple entries with the same key then any of them can be chosen. The result will never change if no entries are inserted or removed.
+
 # The MapFindNext_##Name function
 
+## Synopsis
+```c
+MapEntry_##Name**MapFindNext_##Name(Map_##Name*,MapEntry_##Name*);
+```
+
+## Description
+Find the next entry with a key equal to the key of the entry provided, if there are multiple entries with the same key then any of them can be chosen as long as they don't come before the entry provided. The result will never change if no entries are inserted or removed. The entry provided must be from the map provided.
+
 # The MapAdd_##Name function
+
+## Synopsis
+```c
+MapEntry_##Name**MapAdd_##Name(Map_##Name*,MapKey_##Name);
+```
+
+## Description
+Inserts an entry into the map provided with the key provided, and returns the pointer to the pointer to the entry. If the entry could not be inserted then the function will return the null pointer.
 
 # The MapLocate_##Name function
 
@@ -99,7 +123,7 @@ Clears all entries in the map, which will release all resources associated with 
 
 # Pointer Lifetime
 A pointer to an entry will exist for as long as the entry exists.<br>
-A pointer to a pointer to an entry will exist until a key is added or removed.
+A pointer to a pointer to an entry will exist until an entry is added or removed.
 
 # Reserved Identifiers
 

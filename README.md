@@ -53,6 +53,24 @@ This macro defines all functions declared by `MapDecl`.
 ## Constraints
 MapDef shall only be called once per name, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation of MapDef with the same name somewhere.
 
+# The Map_##Name type and structure
+
+# The MapEntry_##Name type and structure
+
+# The MapKey_##Name type
+
+# The MapFind_##Name function
+
+# The MapFindNext_##Name function
+
+# The MapAdd_##Name function
+
+# The MapLocate_##Name function
+
+# The MapRemove_##Name function
+
+# The MapClear_##Name function
+
 # Reserved Identifiers
 
 This header reserves all identifiers beginning with `MapRESERVED__` in all contexts.

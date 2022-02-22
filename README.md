@@ -151,6 +151,8 @@ All function, type, and structure names declared by calls to MapDecl shall not b
 
 The names of predefined structure members shall not be defined as macros.
 
+The names `MapDecl` and `MapDef` are reserved macro names for this header.
+
 # Example
 ```c
 #include<stdio.h>

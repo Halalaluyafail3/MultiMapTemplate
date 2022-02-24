@@ -27,6 +27,8 @@ The objects declared by `Val` and `Extra` shall not have names which conflict wi
 
 In each translation unit MapDecl shall only be called once per name, duplicate calls are never allowed. MapDecl invocations which use the same name shall all be equivalent.
 
+All invocations of `MapDecl` with the same name shall specify compatible types for `Key`, and all members declared by `Val` and `Extra` shall have the same names, be of compatible types, and have equivalent alignment specifications.
+
 This macro shall only be used at the global scope.
 
 # The MapDef macro

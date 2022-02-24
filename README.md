@@ -141,7 +141,7 @@ void MapClear_##Name(Map_##Name*);
 ```
 
 ## Desciption
-Clears all entries in the map, which will release all resources associated with the Map. An empty map is always one without any resources to free.
+Clears all entries in the map, which will release all resources associated with the Map. An empty map is always one without any resources to free (even without calling `MapClear_##Name`).
 
 # Pointer Lifetime
 A pointer to an entry will exist for as long as the entry exists.<br>

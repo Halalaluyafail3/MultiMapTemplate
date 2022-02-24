@@ -23,7 +23,7 @@ Declares a map using the given name and types.
 This macro declares all types, structures, and functions later described.
 
 ## Constraints
-The objects declared by `Val` and `Extra` shall not have names which conflict with the predefined names of the structs that they are in.
+The objects declared by `Val` and `Extra` shan't have names which conflict with the predefined names of the structs that they are in.
 
 In each translation unit `MapDecl` shall only be called once per name, duplicate calls are never allowed. `MapDecl` invocations which use the same name shall all be equivalent.
 
@@ -151,9 +151,9 @@ A pointer to a pointer to an entry will exist until an entry is added to or remo
 
 This header reserves all identifiers beginning with `MapRESERVED__` in all contexts.
 
-All function, type, and structure names declared by calls to MapDecl shall not be used as macro names or declared globally.
+All function, type, and structure names declared by calls to MapDecl shan't be used as macro names or declared globally.
 
-The names of predefined structure members shall not be defined as macros.
+The names of predefined structure members shan't be defined as macros.
 
 The names `MapDecl` and `MapDef` are reserved macro names for this header.
 

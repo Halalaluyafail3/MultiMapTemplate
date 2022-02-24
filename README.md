@@ -145,7 +145,7 @@ Clears all entries in the map, which will release all resources associated with 
 
 # Pointer Lifetime
 A pointer to an entry will exist for as long as the entry exists.<br>
-A pointer to a pointer to an entry will exist until an entry is added or removed.
+A pointer to a pointer to an entry will exist until an entry is added to or removed from the map which the entry is a part of.
 
 # Reserved Identifiers
 

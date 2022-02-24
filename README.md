@@ -62,7 +62,7 @@ There are some restrictions on the functions or macros provided:<br>
 `Cmp`: All keys passed to `MapAdd_#Name` and `MapFind_##Name` shall be valid to pass as one of the arguments, the return value shall never change for equivalent calls, and it should define a normal equality comparison (the reflexive, symmetric, and transitive properties shall all be upheld)
 `Alloc`: If the pointer returned, it shall be valid until `Free` is called for the pointer.
 
-For keys which are never passed to `MapAdd_##Name` or `MapFind_##Name` whether they make sense in `Hash` or `Cmp` need not be considered, e.g. with float keys if NaN is never inserted or searched for then `Cmp` need not make sure that NaN compares equal to NaN.
+For keys which are never passed to `MapAdd_##Name` or `MapFind_##Name` whether they make sense in `Hash` or `Cmp` need not be considered, e.g. with float keys if NaN is never inserted or searched for then `Cmp` need not make sure that NaN compares equal to NaN and `Hash` need not make sure that all NaN values hash to the same value.
 
 MapDef shall only be called once per name, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation of MapDef with the same name somewhere.
 

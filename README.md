@@ -71,7 +71,7 @@ This macro shall only be used at the global scope.
 # The Map_##Name type and structure
 A typedef and structure which contains information about a map. This is where the `Extra` argument from `MapDecl` is evaluated, it will see the `Map_##Name` type and structure as incomplete types, it will see the `MapEntry_##Name` type and structure as complete structure types, and it will see `MapKey_##Name` as a complete object type other than an array type. All objects declared in the `Extra` argument are placed inside of this structure before all of the predefined members:<br>
 `MapEntryCnt` (`size_t`): The number of entries contained in the map<br>
-`MapBucketsSize` (`size_t`): The number of buckets (a power of two or zero iff Entry)<br>
+`MapBucketsSize` (`size_t`): The number of buckets (a power of two greater than or equal to 8, or zero iff Entry)<br>
 `MapBuckets` (`MapEntry_##Name**`): The pointer to an array of buckets (a pointer to the first entry at that index, or null)
 
 # The MapEntry_##Name type and structure

@@ -180,10 +180,10 @@ MapDef(I,Hash,Cmp,Alloc,Free)
 #undef Alloc
 #undef Free
 static MapEntry_I**Insert(Map_I*Map,MapKey_I Key,int Val){
-	MapEntry_I**Entry=MapAdd_I(Map,Key); // add the key
+	MapEntry_I**Entry=MapAdd_I(Map,Key); // add the entry
 	if(!Entry){ // for this example handling an error isn't important
 		exit(EXIT_FAILURE);}
-	(*Entry)->Val=Val;
+	(*Entry)->Val=Val; // and set the value
 	return Entry;}
 int main(void){
 	Map_I m={0}; // create the map and initialize it to be empty

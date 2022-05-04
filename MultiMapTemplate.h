@@ -56,8 +56,7 @@
 				return&MapRESERVED__Entry->MapNext;}\
 			MapRESERVED__Entry=MapRESERVED__Next;}}\
 	MapEntry_##Name**MapFindNext_##Name(Map_##Name*MapRESERVED__Map,MapEntry_##Name*MapRESERVED__Entry){\
-		MapKey_##Name MapRESERVED__Key=MapRESERVED__Entry->MapKey;\
-		for(;;){\
+		for(MapKey_##Name MapRESERVED__Key=MapRESERVED__Entry->MapKey;;){\
 			MapEntry_##Name*MapRESERVED__Next=MapRESERVED__Entry->MapNext;\
 			if(!MapRESERVED__Next){\
 				return 0;}\

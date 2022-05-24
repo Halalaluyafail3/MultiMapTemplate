@@ -1,18 +1,18 @@
 # MultiMapTemplate
 A header only multimap library using macros in C.
 
-The header defines the two macros `MapDecl` and `MapDef` and includes the headers `stdint.h` and `stddef.h`.
+The header defines the two macros `MAP_DECL` and `MAP_DEF` and includes the headers `stdint.h` and `stddef.h`.
 
 This library assumes `typeof` exists, specifically it relies on `typeof(type)`. If `typeof` is not provided by your compiler, it should be defined as a macro which calls your compiler's version of `typeof`. If `typeof` is defined as `#define typeof(...)__VA_ARGS__` (because `typeof` is not supported) or something equivalent, then the type provided as the type of the keys shall be specified such that the type of a pointer to a key can be obtained by postfixing a `*` to the type of the keys.
 
 Hereinafter the notation `##Name` is used to indicate that `Name` is used as a suffix.
 
-# The MapDecl macro
+# The MAP_DECL macro
 Declares a map using the given name and types.
 
 ## Synopsis
 ```c
-#define MapDecl(Name,Key,Val,Extra) /* ... */
+#define MAP_DECL(Name,Key,Val,Extra) /* ... */
 ```
 
 ## Description
@@ -25,18 +25,18 @@ This macro declares all types, structures, and functions later described.
 ## Constraints
 The objects declared by `Val` and `Extra` shan't have names which conflict with the predefined names of the structs that they are in.
 
-In each translation unit `MapDecl` shall only be called once per name, duplicate calls are never allowed. `MapDecl` invocations which use the same name shall all be equivalent.
+In each translation unit `MAP_DECL` shall only be called once per name, duplicate calls are never allowed. `MAP_DECL` invocations which use the same name shall all be equivalent.
 
-All invocations of `MapDecl` with the same name shall specify compatible types for `Key`, and all members declared by `Val` and `Extra` shall have the same names, be of compatible types, and have equivalent alignment specifications.
+All invocations of `MAP_DECL` with the same name shall specify compatible types for `Key`, and all members declared by `Val` and `Extra` shall have the same names, be of compatible types, and have equivalent alignment specifications.
 
 This macro shall only be used at the global scope.
 
-# The MapDef macro
+# The MAP_DEF macro
 Defines a map using the given name and functions.
 
 ## Synopsis
 ```c
-#define MapDef(Name,Hash,Cmp,Alloc,Free) /* ... */
+#define MAP_DEF(Name,Hash,Cmp,Alloc,Free) /* ... */
 ```
 
 ## Description
@@ -52,7 +52,7 @@ They shall also return the following types:<br>
 `Alloc`: A `void*`<br>
 `Free`: Any type, even incomplete types such as `void`
 
-This macro defines all functions declared by `MapDecl`.
+This macro defines all functions declared by `MAP_DECL`.
 
 ## Constraints
 When `Hash`, `Cmp`, `Alloc`, or `Free` are provided as macros they shall be fully protected by parentheses, and evaluate each of their arguments exactly once except for the pointer to map argument which may be evaluated any number of times.
@@ -64,24 +64,24 @@ There are some restrictions on the functions or macros provided:<br>
 
 For keys which are never passed to `MapAdd_##Name` or `MapFind_##Name` whether they make sense in `Hash` or `Cmp` need not be considered, e.g. with float keys if NaN is never inserted or searched for then `Cmp` need not make sure that NaN compares equal to NaN and `Hash` need not make sure that all NaN values hash to the same value.
 
-MapDef shall only be called once per name, duplicate calls are never allowed, even in seperate translation units. MapDecl must be called in the translation unit before calling MapDef. If MapDecl is used for a name, there shall be an invocation of MapDef with the same name somewhere.
+MAP_DEF shall only be called once per name, duplicate calls are never allowed, even in seperate translation units. MAP_DECL must be called in the translation unit before calling MAP_DEF. If MAP_DECL is used for a name, there shall be an invocation of MAP_DEF with the same name somewhere.
 
 This macro shall only be used at the global scope.
 
 # The Map_##Name type and structure
-A typedef and structure which contains information about a map. This is where the `Extra` argument from `MapDecl` is evaluated, it will see the `Map_##Name` type and structure as incomplete types, it will see the `MapEntry_##Name` type and structure as complete structure types, and it will see `MapKey_##Name` as a complete object type other than an array type. All objects declared in the `Extra` argument are placed inside of this structure before all of the predefined members:<br>
+A typedef and structure which contains information about a map. This is where the `Extra` argument from `MAP_DECL` is evaluated, it will see the `Map_##Name` type and structure as incomplete types, it will see the `MapEntry_##Name` type and structure as complete structure types, and it will see `MapKey_##Name` as a complete object type other than an array type. All objects declared in the `Extra` argument are placed inside of this structure before all of the predefined members:<br>
 `MapEntryCnt` (`size_t`): The number of entries contained in the map<br>
 `MapBucketsSize` (`size_t`): The number of buckets (a power of two greater than or equal to 8, or zero iff Entry)<br>
 `MapBuckets` (`MapEntry_##Name**`): The pointer to an array of buckets (a pointer to the first entry at that index, or null)
 
 # The MapEntry_##Name type and structure
-A typedef and structure which contains information about an entry. This is where the `Val` argument from `MapDecl` is evaluated, it will see the `Map_##Name` and `MapEntry_##Name` types and structures as incomplete types, and it will see `MapKey_##Name` as a complete object type other than an array type. All objects declared in the `Val` argument are placed inside of this structure after all of the predefined members:<br>
+A typedef and structure which contains information about an entry. This is where the `Val` argument from `MAP_DECL` is evaluated, it will see the `Map_##Name` and `MapEntry_##Name` types and structures as incomplete types, and it will see `MapKey_##Name` as a complete object type other than an array type. All objects declared in the `Val` argument are placed inside of this structure after all of the predefined members:<br>
 `MapNext` (`MapEntry_##Name*`): The pointer to the next entry which is placed at the same index, or null<br>
 `MapHash` (`size_t`): The hash of the key stored<br>
 `MapKey` (`MapKey_##Name`): The key stored in the entry
 
 # The MapKey_##Name type
-A typedef for the type of the keys. This is where the `Key` argument from `MapDecl` is evaluated, it will see the `Map_##Name` and `MapEntry_##Name` types and structures as incomplete types.
+A typedef for the type of the keys. This is where the `Key` argument from `MAP_DECL` is evaluated, it will see the `Map_##Name` and `MapEntry_##Name` types and structures as incomplete types.
 
 # The MapFind_##Name function
 
@@ -151,11 +151,11 @@ A pointer to a pointer to an entry will exist until an entry is added to or remo
 
 This header reserves all identifiers beginning with `MapRESERVED__` in all contexts.
 
-All function, type, and structure names declared by calls to MapDecl shan't be used as macro names or declared globally.
+All function, type, and structure names declared by calls to MAP_DECL shan't be used as macro names or declared globally.
 
 The names of predefined structure members shan't be defined as macros.
 
-The names `MapDecl` and `MapDef` are reserved macro names for this header.
+The names `MAP_DECL` and `MAP_DEF` are reserved macro names for this header.
 
 # Example
 ```c
@@ -169,12 +169,12 @@ static size_t HashStr(const char*Str){
 	for(size_t Idx=0;Str[Idx];++Idx){
 		Res^=(Res<<5)+(Res>>2)+Str[Idx];}
 	return Res;}
-MapDecl(I,const char*,int Val;,)
+MAP_DECL(I,const char*,int Val;,)
 #define Hash(Str,...)HashStr(Str)
 #define Cmp(Str1,Str2,...)(!strcmp(Str1,Str2))
 #define Alloc(Size,...)malloc(Size)
 #define Free(Ptr,...)free(Ptr)
-MapDef(I,Hash,Cmp,Alloc,Free)
+MAP_DEF(I,Hash,Cmp,Alloc,Free)
 #undef Hash // undefine the names afterward since they aren't needed
 #undef Cmp
 #undef Alloc

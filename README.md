@@ -159,43 +159,50 @@ The names `MAP_DECL` and `MAP_DEF` are reserved macro names for this header.
 
 # Example
 ```c
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-#include<stdbool.h>
-#include"MultiMapTemplate.h"
-static size_t HashStr(const char*Str){
-	size_t Res=strlen(Str);
-	for(size_t Idx=0;Str[Idx];++Idx){
-		Res^=(Res<<5)+(Res>>2)+Str[Idx];}
-	return Res;}
-MAP_DECL(I,const char*,int Val;,)
-#define Hash(Str,...)HashStr(Str)
-#define Cmp(Str1,Str2,...)(!strcmp(Str1,Str2))
-#define Alloc(Size,...)malloc(Size)
-#define Free(Ptr,...)free(Ptr)
-MAP_DEF(I,Hash,Cmp,Alloc,Free)
+#include "MultiMapTemplate.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+static size_t HashStr(const char *Str) {
+  size_t Res = strlen(Str);
+  for (size_t Idx = 0; Str[Idx]; ++Idx) {
+    Res ^= (Res << 5) + (Res >> 2) + Str[Idx];
+  }
+  return Res;
+}
+MAP_DECL(I, const char *, int Val;, )
+#define Hash(Str, ...) HashStr(Str)
+#define Cmp(Str1, Str2, ...) (!strcmp(Str1, Str2))
+#define Alloc(Size, ...) malloc(Size)
+#define Free(Ptr, ...) free(Ptr)
+MAP_DEF(I, Hash, Cmp, Alloc, Free)
 #undef Hash // undefine the names afterward since they aren't needed
 #undef Cmp
 #undef Alloc
 #undef Free
-static MapEntry_I**Insert(Map_I*Map,MapKey_I Key,int Val){
-	MapEntry_I**Entry=MapAdd_I(Map,Key); // add the entry
-	if(!Entry){ // for this example handling an error isn't important
-		exit(EXIT_FAILURE);}
-	(*Entry)->Val=Val; // and set the value
-	return Entry;}
-int main(void){
-	Map_I m={0}; // create the map and initialize it to be empty
-	MapEntry_I*e=*Insert(&m,"a",1); // a=1, save pointer to it
-	Insert(&m,"b",2); // b=2
-	Insert(&m,"c",3); // c=3
-	Insert(&m,"d",4); // d=4
-	MapRemove_I(&m,MapLocate_I(&m,e)); // since m changed, find e again, then remove it
-	MapRemove_I(&m,MapFind_I(&m,"c")); // remove c
-	Insert(&m,"b",3); // b=3, multiple values for the same key may be used
-	e=*MapFind_I(&m,"b"); // find first b
-	printf("%i %i\n",e->Val,(*MapFindNext_I(&m,e))->Val); // prints 2 and 3 in any order
-	MapClear_I(&m); // clear m
-	return 0;}
+static MapEntry_I **Insert(Map_I *Map, MapKey_I Key, int Val) {
+  MapEntry_I **Entry = MapAdd_I(Map, Key); // add the entry
+  if (!Entry) { // for this example handling an error isn't important
+    exit(EXIT_FAILURE);
+  }
+  (*Entry)->Val = Val; // and set the value
+  return Entry;
+}
+int main(void) {
+  Map_I m = {0}; // create the map and initialize it to be empty
+  MapEntry_I *e = *Insert(&m, "a", 1); // a=1, save pointer to it
+  Insert(&m, "b", 2);                  // b=2
+  Insert(&m, "c", 3);                  // c=3
+  Insert(&m, "d", 4);                  // d=4
+  MapRemove_I(
+      &m, MapLocate_I(&m, e)); // since m changed, find e again, then remove it
+  MapRemove_I(&m, MapFind_I(&m, "c")); // remove c
+  Insert(&m, "b", 3);      // b=3, multiple values for the same key may be used
+  e = *MapFind_I(&m, "b"); // find first b
+  printf("%i %i\n", e->Val,
+         (*MapFindNext_I(&m, e))->Val); // prints 2 and 3 in any order
+  MapClear_I(&m);                       // clear m
+  return 0;
+}
 ```

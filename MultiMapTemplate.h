@@ -122,13 +122,15 @@
       MapRESERVED__Map->MapEntryCnt = 1;                                       \
       MapRESERVED__Entry->MapNext = 0;                                         \
       MapRESERVED__Map->MapBuckets[MapRESERVED__Idx] = MapRESERVED__Entry;     \
-      MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 1 & 7] = 0;              \
-      MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 2 & 7] = 0;              \
-      MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 3 & 7] = 0;              \
-      MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 4 & 7] = 0;              \
-      MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 5 & 7] = 0;              \
-      MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 6 & 7] = 0;              \
-      MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 7 & 7] = 0;              \
+      MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 1 & 7] =                 \
+          MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 2 & 7] =             \
+              MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 3 & 7] =         \
+                  MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 4 & 7] =     \
+                      MapRESERVED__Map->MapBuckets[MapRESERVED__Idx + 5 & 7] = \
+                          MapRESERVED__Map                                     \
+                              ->MapBuckets[MapRESERVED__Idx + 6 & 7] =         \
+                              MapRESERVED__Map                                 \
+                                  ->MapBuckets[MapRESERVED__Idx + 7 & 7] = 0;  \
       return MapRESERVED__Map->MapBuckets + MapRESERVED__Idx;                  \
     }                                                                          \
     if (++MapRESERVED__Map->MapEntryCnt >                                      \
@@ -197,7 +199,6 @@
     }                                                                          \
     Free(MapRESERVED__Map->MapBuckets, MapRESERVED__Map);                      \
     MapRESERVED__Map->MapBuckets = 0;                                          \
-    MapRESERVED__Map->MapBucketsSize = 0;                                      \
-    MapRESERVED__Map->MapEntryCnt = 0;                                         \
+    MapRESERVED__Map->MapBucketsSize = MapRESERVED__Map->MapEntryCnt = 0;      \
   }
 #endif

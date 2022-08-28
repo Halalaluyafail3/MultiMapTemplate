@@ -1,4 +1,4 @@
-#ifndef MAP_DECL
+#pragma once
 #include <stddef.h>
 #include <stdint.h>
 #define MAP_DECL(Name, Key, Val, Extra)                                        \
@@ -201,4 +201,3 @@
     MapRESERVED__Map->MapBuckets = 0;                                          \
     MapRESERVED__Map->MapBucketsSize = MapRESERVED__Map->MapEntryCnt = 0;      \
   }
-#endif

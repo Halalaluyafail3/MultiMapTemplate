@@ -35,7 +35,8 @@
          MapRESERVED__Idx != MapRESERVED__NewBucketsSize;                      \
          ++MapRESERVED__Idx) {                                                 \
       MapRESERVED__NewBuckets[MapRESERVED__Idx] = 0;                           \
-    }                                                                          \
+    } /* insert all of the old entries into the new table (doesn't preserve    \
+         any order) */                                                         \
     for (size_t MapRESERVED__Idx = 0;                                          \
          MapRESERVED__Idx != MapRESERVED__Map->MapBucketsSize;                 \
          ++MapRESERVED__Idx) {                                                 \
@@ -66,7 +67,7 @@
         MapRESERVED__Map->MapBuckets[MapRESERVED__Idx];                        \
     if (!MapRESERVED__Entry) {                                                 \
       return 0;                                                                \
-    }                                                                          \
+    } /* find the first entry in the bucket that is equal to the key */        \
     if (Cmp(MapRESERVED__Key, MapRESERVED__Entry->MapKey, MapRESERVED__Map)) { \
       return MapRESERVED__Map->MapBuckets + MapRESERVED__Idx;                  \
     }                                                                          \
@@ -107,7 +108,9 @@
       return 0;                                                                \
     }                                                                          \
     MapRESERVED__Entry->MapKey = MapRESERVED__Key;                             \
-    if (!MapRESERVED__Map->MapBucketsSize) {                                   \
+    if (!MapRESERVED__Map                                                      \
+             ->MapBucketsSize) { /* empty map, allocate space for 8 buckets    \
+                                    and insert the new element */              \
       if (sizeof(MapEntry_##Name *) > SIZE_MAX >> 3 ||                         \
           !(MapRESERVED__Map->MapBuckets =                                     \
                 Alloc(sizeof(MapEntry_##Name *) << 3),                         \
@@ -132,7 +135,8 @@
                               MapRESERVED__Map                                 \
                                   ->MapBuckets[MapRESERVED__Idx + 7 & 7] = 0;  \
       return MapRESERVED__Map->MapBuckets + MapRESERVED__Idx;                  \
-    }                                                                          \
+    } /* when the ratio of the number of entries to buckets is more than 3:4,  \
+         try to reallocate to add more buckets */                              \
     if (++MapRESERVED__Map->MapEntryCnt >                                      \
             (MapRESERVED__Map->MapBucketsSize >> 1) +                          \
                 (MapRESERVED__Map->MapBucketsSize >> 2) &&                     \
@@ -140,7 +144,7 @@
             SIZE_MAX / sizeof(MapEntry_##Name *) >> 1) {                       \
       MapRESERVED__MapRehash_##Name(MapRESERVED__Map,                          \
                                     MapRESERVED__Map->MapBucketsSize << 1);    \
-    }                                                                          \
+    } /* add the new token into the bucket */                                  \
     size_t MapRESERVED__Idx = (MapRESERVED__Entry->MapHash =                   \
                                    Hash(MapRESERVED__Key, MapRESERVED__Map)) & \
                               MapRESERVED__Map->MapBucketsSize - 1;            \
@@ -155,6 +159,7 @@
         MapRESERVED__Entry->MapHash & MapRESERVED__Map->MapBucketsSize - 1;    \
     MapEntry_##Name *MapRESERVED__Prev =                                       \
         MapRESERVED__Map->MapBuckets[MapRESERVED__Idx];                        \
+    /* search into the bucket to find what points at the entry */              \
     if (MapRESERVED__Prev == MapRESERVED__Entry) {                             \
       return MapRESERVED__Map->MapBuckets + MapRESERVED__Idx;                  \
     }                                                                          \
@@ -171,12 +176,15 @@
     MapEntry_##Name *MapRESERVED__Next = (*MapRESERVED__Entry)->MapNext;       \
     Free(*MapRESERVED__Entry, MapRESERVED__Map);                               \
     *MapRESERVED__Entry = MapRESERVED__Next;                                   \
-    if (!--MapRESERVED__Map->MapEntryCnt) {                                    \
+    if (!--MapRESERVED__Map->MapEntryCnt) { /* an empty map must have no       \
+                                               memory left to free */          \
       Free(MapRESERVED__Map->MapBuckets, MapRESERVED__Map);                    \
       MapRESERVED__Map->MapBuckets = 0;                                        \
       MapRESERVED__Map->MapBucketsSize = 0;                                    \
     } else if (MapRESERVED__Map                                                \
-                   ->MapEntryCnt<MapRESERVED__Map->MapBucketsSize>> 3) {       \
+                   ->MapEntryCnt<MapRESERVED__Map->MapBucketsSize>>            \
+               3) { /* when the ration of the number of entries to buckets is  \
+                       less than 1:8, try to shrink to save space */           \
       MapRESERVED__MapRehash_##Name(MapRESERVED__Map,                          \
                                     MapRESERVED__Map->MapBucketsSize >> 1);    \
     }                                                                          \

@@ -178,10 +178,10 @@ static size_t HashString(const char *String) { // basic string hasher
 // and no extra data needs to be stored in the map itself
 MAP_DECLARATION(I, const char *, int Value;, )
 // the map parameter doesn't need to be evaluated
-#define Hash(String, ...) HashString(String)
-#define IsEqual(String1, String2, ...) (!strcmp(String1, String2))
-#define Allocate(Size, ...) malloc(Size)
-#define Free(Pointer, ...) free(Pointer)
+#define Hash(String, Map) HashString(String)
+#define IsEqual(String1, String2, Map) (!strcmp(String1, String2))
+#define Allocate(Size, Map) malloc(Size)
+#define Free(Pointer, Map) free(Pointer)
 MAP_DEFINITION(I, Hash, IsEqual, Allocate, Free)
 #undef Hash // undefine the names afterward since they aren't needed
 #undef IsEqual

@@ -201,15 +201,15 @@ int main(void) {
   Insert(&Map, "b", 2);                      // b=2
   Insert(&Map, "c", 3);                      // c=3
   Insert(&Map, "d", 4);                      // d=4
-  MapRemove_I(
-      &Map, MapLocate_I(
-                &Map, Entry)); // since m changed, find e again, then remove it
+  MapRemove_I(&Map,
+              MapLocate_I(&Map, Entry));   // since the map changed, find the
+                                           // entry again, then remove it
   MapRemove_I(&Map, MapFind_I(&Map, "c")); // remove c
   Insert(&Map, "b", 3); // b=3, multiple values for the same key may be used
   Entry = *MapFind_I(&Map, "b"); // find first b
   printf("%i %i\n", Entry->Value,
          (*MapFindNext_I(&Map, Entry))->Value); // prints 2 and 3 in any order
-  MapClear_I(&Map);                             // clear m
+  MapClear_I(&Map);                             // clear the map
   return 0;
 }
 ```

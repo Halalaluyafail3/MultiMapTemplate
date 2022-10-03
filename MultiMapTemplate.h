@@ -114,8 +114,7 @@
                                     and insert the new element */              \
       if (sizeof(MapEntry_##Name *) > SIZE_MAX >> 3 ||                         \
           !(MapRESERVED__Map->MapBuckets =                                     \
-                Allocate(sizeof(MapEntry_##Name *) << 3),                      \
-            MapRESERVED__Map)) {                                               \
+                Allocate(sizeof(MapEntry_##Name *) << 3, MapRESERVED__Map))) { \
         Free(MapRESERVED__Entry, MapRESERVED__Map);                            \
         return 0;                                                              \
       }                                                                        \

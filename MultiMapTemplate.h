@@ -185,7 +185,7 @@
       MapRESERVED__Map->MapBucketsSize = 0;                                    \
     } else if (MapRESERVED__Map                                                \
                    ->MapEntryCount<MapRESERVED__Map->MapBucketsSize>>          \
-               3) { /* when the ration of the number of entries to buckets is  \
+               3) { /* when the ratio of the number of entries to buckets is   \
                        less than 1:8, try to shrink to save space */           \
       MapRESERVED__MapRehash_##Name(MapRESERVED__Map,                          \
                                     MapRESERVED__Map->MapBucketsSize >> 1);    \

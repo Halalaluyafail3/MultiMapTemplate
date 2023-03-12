@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MapRESERVED__MULTIMAPTEMPLATE_H
+#define MapRESERVED__MULTIMAPTEMPLATE_H
 #include <stddef.h>
 #include <stdint.h>
 #define MAP_DECLARATION(Name, Key, Value, Extra)                               \
@@ -211,3 +212,4 @@
     MapRESERVED__Map->MapBuckets = 0;                                          \
     MapRESERVED__Map->MapBucketsSize = MapRESERVED__Map->MapEntryCount = 0;    \
   }
+#endif

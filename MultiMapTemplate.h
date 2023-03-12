@@ -2,7 +2,7 @@
 #define MapRESERVED__MULTIMAPTEMPLATE_H
 #include <stddef.h>
 #include <stdint.h>
-#define MAP_DECLARATION(Name, Key, Value, Extra)                               \
+#define MAP_DECLARATION(Name, Qualifiers, Key, Value, Extra)                   \
   typedef struct MapEntry_##Name MapEntry_##Name;                              \
   typedef struct Map_##Name Map_##Name;                                        \
   typedef typeof(Key) MapKey_##Name;                                           \
@@ -17,13 +17,15 @@
     size_t MapBucketsSize;                                                     \
     MapEntry_##Name **MapBuckets;                                              \
   };                                                                           \
-  MapEntry_##Name **MapFind_##Name(Map_##Name *, MapKey_##Name);               \
-  MapEntry_##Name **MapFindNext_##Name(Map_##Name *, MapEntry_##Name *);       \
-  MapEntry_##Name **MapAdd_##Name(Map_##Name *, MapKey_##Name);                \
-  MapEntry_##Name **MapLocate_##Name(Map_##Name *, MapEntry_##Name *);         \
-  void MapRemove_##Name(Map_##Name *, MapEntry_##Name **);                     \
-  void MapClear_##Name(Map_##Name *);
-#define MAP_DEFINITION(Name, Hash, IsEqual, Allocate, Free)                    \
+  Qualifiers MapEntry_##Name **MapFind_##Name(Map_##Name *, MapKey_##Name);    \
+  Qualifiers MapEntry_##Name **MapFindNext_##Name(Map_##Name *,                \
+                                                  MapEntry_##Name *);          \
+  Qualifiers MapEntry_##Name **MapAdd_##Name(Map_##Name *, MapKey_##Name);     \
+  Qualifiers MapEntry_##Name **MapLocate_##Name(Map_##Name *,                  \
+                                                MapEntry_##Name *);            \
+  Qualifiers void MapRemove_##Name(Map_##Name *, MapEntry_##Name **);          \
+  Qualifiers void MapClear_##Name(Map_##Name *);
+#define MAP_DEFINITION(Name, Qualifiers, Hash, IsEqual, Allocate, Free)        \
   static void MapRESERVED__MapRehash_##Name(                                   \
       Map_##Name *MapRESERVED__Map, size_t MapRESERVED__NewBucketsSize) {      \
     MapEntry_##Name **MapRESERVED__NewBuckets = Allocate(                      \
@@ -57,8 +59,8 @@
     MapRESERVED__Map->MapBuckets = MapRESERVED__NewBuckets;                    \
     MapRESERVED__Map->MapBucketsSize = MapRESERVED__NewBucketsSize;            \
   }                                                                            \
-  MapEntry_##Name **MapFind_##Name(Map_##Name *MapRESERVED__Map,               \
-                                   MapKey_##Name MapRESERVED__Key) {           \
+  Qualifiers MapEntry_##Name **MapFind_##Name(                                 \
+      Map_##Name *MapRESERVED__Map, MapKey_##Name MapRESERVED__Key) {          \
     if (!MapRESERVED__Map->MapBucketsSize) {                                   \
       return 0;                                                                \
     }                                                                          \
@@ -85,8 +87,8 @@
       MapRESERVED__Entry = MapRESERVED__Next;                                  \
     }                                                                          \
   }                                                                            \
-  MapEntry_##Name **MapFindNext_##Name(Map_##Name *MapRESERVED__Map,           \
-                                       MapEntry_##Name *MapRESERVED__Entry) {  \
+  Qualifiers MapEntry_##Name **MapFindNext_##Name(                             \
+      Map_##Name *MapRESERVED__Map, MapEntry_##Name *MapRESERVED__Entry) {     \
     for (MapKey_##Name MapRESERVED__Key = MapRESERVED__Entry->MapKey;;) {      \
       MapEntry_##Name *MapRESERVED__Next = MapRESERVED__Entry->MapNext;        \
       if (!MapRESERVED__Next) {                                                \
@@ -99,8 +101,8 @@
       MapRESERVED__Entry = MapRESERVED__Next;                                  \
     }                                                                          \
   }                                                                            \
-  MapEntry_##Name **MapAdd_##Name(Map_##Name *MapRESERVED__Map,                \
-                                  MapKey_##Name MapRESERVED__Key) {            \
+  Qualifiers MapEntry_##Name **MapAdd_##Name(Map_##Name *MapRESERVED__Map,     \
+                                             MapKey_##Name MapRESERVED__Key) { \
     if (MapRESERVED__Map->MapEntryCount == SIZE_MAX) {                         \
       return 0;                                                                \
     }                                                                          \
@@ -156,8 +158,8 @@
     MapRESERVED__Map->MapBuckets[MapRESERVED__Index] = MapRESERVED__Entry;     \
     return MapRESERVED__Map->MapBuckets + MapRESERVED__Index;                  \
   }                                                                            \
-  MapEntry_##Name **MapLocate_##Name(Map_##Name *MapRESERVED__Map,             \
-                                     MapEntry_##Name *MapRESERVED__Entry) {    \
+  Qualifiers MapEntry_##Name **MapLocate_##Name(                               \
+      Map_##Name *MapRESERVED__Map, MapEntry_##Name *MapRESERVED__Entry) {     \
     size_t MapRESERVED__Index =                                                \
         MapRESERVED__Entry->MapHash & MapRESERVED__Map->MapBucketsSize - 1;    \
     MapEntry_##Name *MapRESERVED__Previous =                                   \
@@ -174,8 +176,8 @@
       MapRESERVED__Previous = MapRESERVED__Next;                               \
     }                                                                          \
   }                                                                            \
-  void MapRemove_##Name(Map_##Name *MapRESERVED__Map,                          \
-                        MapEntry_##Name **MapRESERVED__Entry) {                \
+  Qualifiers void MapRemove_##Name(Map_##Name *MapRESERVED__Map,               \
+                                   MapEntry_##Name **MapRESERVED__Entry) {     \
     MapEntry_##Name *MapRESERVED__Next = (*MapRESERVED__Entry)->MapNext;       \
     Free(*MapRESERVED__Entry, MapRESERVED__Map);                               \
     *MapRESERVED__Entry = MapRESERVED__Next;                                   \
@@ -192,7 +194,7 @@
                                     MapRESERVED__Map->MapBucketsSize >> 1);    \
     }                                                                          \
   }                                                                            \
-  void MapClear_##Name(Map_##Name *MapRESERVED__Map) {                         \
+  Qualifiers void MapClear_##Name(Map_##Name *MapRESERVED__Map) {              \
     if (!MapRESERVED__Map->MapBucketsSize) {                                   \
       return;                                                                  \
     }                                                                          \

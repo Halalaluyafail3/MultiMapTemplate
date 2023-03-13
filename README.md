@@ -19,6 +19,7 @@ The notation `##Name` means that the name provided to `MAP_DECLARATION` or `MAP_
 
 Declares several structures to represent a map, several functions to manipulate a map, and several typedefs for convenience:
 ```c
+// types are declared in this order, which guarantees which types are complete in certain places
 typedef struct MapEntry_##Name MapEntry_##Name;
 typedef struct Map_##Name Map_##Name;
 typedef typeof(Key) MapKey_##Name; // typeof(Key) is used so types such as int(*)(int) can be used without a typedef
@@ -36,7 +37,6 @@ struct Map_##Name {
   MapEntry_##Name **MapBuckets;
 };
 
-// Qualifiers
 Qualifiers MapEntry_##Name **MapFind_##Name(Map_##Name *, MapKey_##Name);
 Qualifiers MapEntry_##Name **MapFindNext_##Name(Map_##Name *, MapEntry_##Name *);
 Qualifiers MapEntry_##Name **MapAdd_##Name(Map_##Name *, MapKey_##Name);
@@ -44,6 +44,22 @@ Qualifiers MapEntry_##Name **MapLocate_##Name(Map_##Name *, MapEntry_##Name *);
 Qualifiers void MapRemove_##Name(Map_##Name *, MapEntry_##Name **);
 Qualifiers void MapClear_##Name(Map_##Name *)
 ```
+
+## Arguments descriptions
+
+`Qualifiers` is used to control the scope of the functions: it should be extern, static, or inline. The meaning of extern, static, and inline are equivalent to what they mean with regular functions.
+
+`Keys` is the type of the keys, it shall be a complete type and not an array type.
+
+`Extra` specifies zero or more structure members at the start of `Map_##Name`. A flexible array member shall not be used. This is intended to be used to provide context to the functions provided to `MAP_DEFINITION`, and can be left empty if not needed.
+
+`Value` specifies zero or more structure members at the end of `MapEntry_##Name`. A flexible array member shall not be used. This is intended to be used to associate the entry with some values, though it can be empty to create a type that is more like a set.
+
+## Structure member descriptions
+
+The map type represents a closed addressing hash table. `MapEntryCount` is the number of entries in the map. `MapBucketsSize` is a power of two greater than or equal to eight, or is zero iff `MapEntryCount` is zero; it represents the sizes of the buckets array. `MapBuckets` is a pointers to the first element in the buckets array, or null if `MapEntryCount` is zero. An empty map will have all three of these members equal to zero, in all other cases all of the members will be non-zero.
+
+The entry type represents an entry in a close addressing hash table. `MapNext` is the pointer to the next entry in the bucket, or null if there are no more entries in the bucket. `MapHash` is the hash of the key in the entry. `MapKey` is the key of this entry.
 
 # The MAP_DEFINITION macro
 
@@ -55,7 +71,7 @@ Qualifiers void MapClear_##Name(Map_##Name *)
 
 ## Description
 
-`MAP_DECLARTION` shall be invoked with `Name` prior to invoking `MAP_DEFINITION` in the same translation unit. `Qualifiers` shall be equivalent to `Qualifiers` argument provided to `MAP_DECLARATION`. `Hash`, `IsEqual`, `Allocate`, and `Free` shall be names of functions or function like macros that exapnd to expressions which evaluate all of their arguments except the Map argument exactly once, properly parenthesize the arguments and operators, and convert the arguments except the Map argument to expected input type by implicit or explicit conversion (e.g. `Free` should accept any pointer to non-constant type).
+`MAP_DECLARTION` shall be invoked with `Name` prior to invoking `MAP_DEFINITION` in the same translation unit. This macro will provide the definitions to the functions declared in `MAP_DECLARATION`. `Qualifiers` shall be equivalent to `Qualifiers` argument provided to `MAP_DECLARATION`. `Hash`, `IsEqual`, `Allocate`, and `Free` shall be names of functions or function like macros that exapnd to expressions which evaluate all of their arguments except the Map argument exactly once, properly parenthesize the arguments and operators, and convert the arguments except the Map argument to expected input type by implicit or explicit conversion (e.g. `Free` should accept any pointer to non-constant type).
 
 Synopses for `Hash`, `IsEqual`, `Allocate`, and `Free`:
 ```c
@@ -67,9 +83,9 @@ void Free(void *Block, Map_##Name *Map);
 // the return value of Free is ignored, if a value is returned it'll be ignored
 ```
 
-`Hash` and `IsEqual` shall be pure functions. Keys that compare equal by a test with `IsEqual` shall have equivalent results from `Hash`. `IsEqual` shall work like a comparison function and follow the basic rules of comparison functions, such as being reflexive (`X==X` is always true), symmetric (`X==Y` implies `Y==X`), and transitive (`X==Y&&Y==Z` implies `X==Z`).
+`Hash` and `IsEqual` shall be pure functions. Keys that compare equal by a test with `IsEqual` shall have equivalent results from `Hash`. `IsEqual` shall work like a comparison function and follow the basic rules of comparison functions, such as being reflexive (`X==X` is always true), symmetric (`X==Y` implies `Y==X`), and transitive (`X==Y&&Y==Z` implies `X==Z`). These rules will only matter for keys that are inserted into the table or searched for.
 
-`Allocate` and `Free` shall work like the functions `malloc` and `free` with an extra `Map` argument.
+`Allocate` and `Free` shall work like the functions `malloc` and `free` with an extra `Map` argument, except that `Free` need not support being called with a null pointer.
 
 # Example
 ```c

@@ -67,7 +67,7 @@ The entry type represents an entry in a close addressing hash table. `MapNext` i
 ## Synopsis
 
 ```c
-#define MAP_DEFINITION(Name, Qualifiers, Hash, IsEqual, Allocate, Free)
+#define MAP_DEFINITION(Name, Qualifiers, Hash, IsEqual, Allocate, Free) /* ... */
 ```
 
 ## Description

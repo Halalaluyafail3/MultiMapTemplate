@@ -20,9 +20,10 @@ The notation `##Name` means that the name provided to `MAP_DECLARATION` or `MAP_
 Declares several structures to represent a map, several functions to manipulate a map, and several typedefs for convenience:
 ```c
 // types are declared in this order, which guarantees which types are complete in certain places
+// typeof(Key) is used so types such as int(*)(int) can be used without a typedef
 typedef struct MapEntry_##Name MapEntry_##Name;
 typedef struct Map_##Name Map_##Name;
-typedef typeof(Key) MapKey_##Name; // typeof(Key) is used so types such as int(*)(int) can be used without a typedef
+typedef typeof(Key) MapKey_##Name;
 
 struct MapEntry_##Name {
   MapEntry_##Name *MapNext;

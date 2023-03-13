@@ -46,7 +46,7 @@ Qualifiers void MapRemove_##Name(Map_##Name *, MapEntry_##Name **);
 Qualifiers void MapClear_##Name(Map_##Name *)
 ```
 
-## Arguments descriptions
+## Argument descriptions
 
 `Qualifiers` is used to control the scope of the functions: it should be extern, static, or inline. The meaning of extern, static, and inline are equivalent to what they mean with regular functions.
 

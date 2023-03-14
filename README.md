@@ -7,6 +7,8 @@ This library assumes `typeof` exists, specifically it relies on `typeof(type)`. 
 
 The notation `##Name` means that the name provided to `MAP_DECLARATION` or `MAP_DEFINITION` is used as a suffix.
 
+An example is provided at the end for how to use this library.
+
 # The MAP_DECLARATION macro
 
 ## Synopsis
@@ -61,6 +63,20 @@ Qualifiers void MapClear_##Name(Map_##Name *)
 The map type represents a closed addressing hash table. `MapEntryCount` is the number of entries in the map. `MapBucketsSize` is a power of two greater than or equal to eight, or is zero iff `MapEntryCount` is zero; it represents the sizes of the buckets array. `MapBuckets` is a pointers to the first element in the buckets array, or null if `MapEntryCount` is zero. An empty map will have all three of these members equal to zero, in all other cases all of the members will be non-zero.
 
 The entry type represents an entry in a close addressing hash table. `MapNext` is the pointer to the next entry in the bucket, or null if there are no more entries in the bucket. `MapHash` is the hash of the key in the entry. `MapKey` is the key of this entry.
+
+## Function descriptions
+
+`MapFind_##Name` searches for an entry with the given key. If a key is found in the table, a pointer to the next pointer of the previous entry in the bucket is returned, or a pointer to the pointer that points at the entry in the buckets array. If no entry is found, null is returned. If multiple entries have keys that compare equal to the provided key to search for, the earliest entry in the bucket is provided. A pointer to pointer is provided so `MapRemove_##Name` has enough information to remove the entry without having to hash the key again or needing a doubly linked list. These pointers to pointers reference things beyond the entry itself, and are only valid until an entry is added or removed.
+
+`MapFindNext_##Name` searches for the next entry with the same key as the provided entry. The entry must be in the provided map. The function is similar to `MapFind_##Name`, except it starts searching after the provided entry and the searched key is obtained from the provided entry. If no key is found, null is returned. The order of entries within a bucket shouldn't be relied up, but it can only change when an entry is inserted or removed. This function does not need information about where the previous entry, so it only takes a pointer to the entry.
+
+`MapAdd_##Name` adds an entry to the table with the provided key. If successful, a pointer similar to the return value of `MapFind_##Name` is returned, or null if unsuccessful. Members specified in the `Value` argument are not initialized by this function.
+
+`MapLocate_##Name` converts a pointer to an entry to a pointer to the pointer pointing at the provided entry. The entry must be in the provided map. A pointer to an entry is stable for the life of the entry, so a pointer to an entry can be stored even if elements are added or removed from the map. The purpose of this function is to get the extra information of where an entry is in a map, primarily so it can be removed from the map. Similarly to `MapFind_##Name`, the resulting pointer is only valid until an entry is added or removed from the map.
+
+`MapRemove_##Name` removes an entry from the map. This function will never fail. This function takes a pointer to the pointer to the entry so it can quickly remove the entry without needing to search the map.
+
+`MapClear_##Name` clears all entries from the given map. This function is useful for ensuring all resources are cleared up when the map should be removed.
 
 # The MAP_DEFINITION macro
 

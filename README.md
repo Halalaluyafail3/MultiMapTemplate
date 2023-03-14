@@ -76,7 +76,7 @@ The entry type represents an entry in a close addressing hash table. `MapNext` i
 
 `MapRemove_##Name` removes an entry from the map. This function will never fail. This function takes a pointer to the pointer to the entry so it can quickly remove the entry without needing to search the map.
 
-`MapClear_##Name` clears all entries from the given map. This function is useful for ensuring all resources are cleared up when the map should be removed.
+`MapClear_##Name` clears all entries from the given map. This function is useful for ensuring all resources are cleaned up when the map should be removed.
 
 # The MAP_DEFINITION macro
 

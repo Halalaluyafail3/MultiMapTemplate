@@ -104,6 +104,10 @@ void Free(void *Block, Map_##Name *Map);
 
 `Allocate` and `Free` shall work like the functions `malloc` and `free` with an extra `Map` argument, except that `Free` need not support being called with a null pointer.
 
+## Reserved identifiers
+
+This header defines the names `MAP_DECLARATION` and `MAP_DEFINITON` as macros, these macros shouldn't be defined prior to including the header file. Names used by `MAP_DEFINITION` shouldn't be used as macro names, except `typeof`. Names starting with `MapRESERVED__` are reserved for this header in all contexts.
+
 # Example
 ```c
 #include "Library/MultiMapTemplate.h"

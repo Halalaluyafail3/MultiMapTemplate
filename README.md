@@ -88,7 +88,7 @@ The entry type represents an entry in a close addressing hash table. `MapNext` i
 
 ## Description
 
-`MAP_DECLARTION` shall be invoked with `Name` prior to invoking `MAP_DEFINITION` in the same translation unit. This macro will provide the definitions to the functions declared in `MAP_DECLARATION`. `Qualifiers` shall be equivalent to `Qualifiers` argument provided to `MAP_DECLARATION`. `Hash`, `IsEqual`, `Allocate`, and `Free` shall be names of functions or function like macros that exapnd to expressions which evaluate all of their arguments except the Map argument exactly once, properly parenthesize the arguments and operators, and convert the arguments except the Map argument to expected input type by implicit or explicit conversion (e.g. `Free` should accept any pointer to non-constant type).
+`MAP_DECLARTION` shall be invoked with `Name` prior to invoking `MAP_DEFINITION` in the same translation unit. This macro will provide the definitions to the functions declared in `MAP_DECLARATION`. `Qualifiers` shall be equivalent to `Qualifiers` argument provided to `MAP_DECLARATION`. `Hash`, `IsEqual`, `Allocate`, and `Free` shall be names of functions or function like macros that expand to expressions which evaluate all of their arguments except the Map argument exactly once, properly parenthesize the arguments and operators, and convert the arguments except the Map argument to expected input type by implicit or explicit conversion (e.g. `Free` should accept any pointer to non-constant type).
 
 Synopses for `Hash`, `IsEqual`, `Allocate`, and `Free`:
 ```c

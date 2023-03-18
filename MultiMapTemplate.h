@@ -64,14 +64,17 @@
     if (!MapRESERVED__Map->MapBucketsSize) {                                   \
       return 0;                                                                \
     }                                                                          \
-    size_t MapRESERVED__Index = Hash(MapRESERVED__Key, MapRESERVED__Map) &     \
-                                MapRESERVED__Map->MapBucketsSize - 1;          \
+    size_t MapRESERVED__Hash = Hash(MapRESERVED__Key, MapRESERVED__Map);       \
+    size_t MapRESERVED__Index =                                                \
+        MapRESERVED__Hash & MapRESERVED__Map->MapBucketsSize - 1;              \
     MapEntry_##Name *MapRESERVED__Entry =                                      \
         MapRESERVED__Map->MapBuckets[MapRESERVED__Index];                      \
     if (!MapRESERVED__Entry) {                                                 \
       return 0;                                                                \
-    } /* find the first entry in the bucket that is equal to the key */        \
-    if (IsEqual(MapRESERVED__Key, MapRESERVED__Entry->MapKey,                  \
+    } /* find the first entry in the bucket that is equal to the key, compare  \
+         hashes first in case IsEqual is expensive */                          \
+    if (MapRESERVED__Hash == MapRESERVED__Entry->MapHash &&                    \
+        IsEqual(MapRESERVED__Key, MapRESERVED__Entry->MapKey,                  \
                 MapRESERVED__Map)) {                                           \
       return MapRESERVED__Map->MapBuckets + MapRESERVED__Index;                \
     }                                                                          \
@@ -80,7 +83,8 @@
       if (!MapRESERVED__Next) {                                                \
         return 0;                                                              \
       }                                                                        \
-      if (IsEqual(MapRESERVED__Key, MapRESERVED__Next->MapKey,                 \
+      if (MapRESERVED__Hash == MapRESERVED__Entry->MapHash &&                  \
+          IsEqual(MapRESERVED__Key, MapRESERVED__Next->MapKey,                 \
                   MapRESERVED__Map)) {                                         \
         return &MapRESERVED__Entry->MapNext;                                   \
       }                                                                        \
@@ -89,12 +93,14 @@
   }                                                                            \
   Qualifiers MapEntry_##Name **MapFindNext_##Name(                             \
       Map_##Name *MapRESERVED__Map, MapEntry_##Name *MapRESERVED__Entry) {     \
+    size_t MapRESERVED__Hash = MapRESERVED__Entry->MapHash;                    \
     for (MapKey_##Name MapRESERVED__Key = MapRESERVED__Entry->MapKey;;) {      \
       MapEntry_##Name *MapRESERVED__Next = MapRESERVED__Entry->MapNext;        \
       if (!MapRESERVED__Next) {                                                \
         return 0;                                                              \
       }                                                                        \
-      if (IsEqual(MapRESERVED__Key, MapRESERVED__Next->MapKey,                 \
+      if (MapRESERVED__Hash == MapRESERVED__Next->MapHash &&                   \
+          IsEqual(MapRESERVED__Key, MapRESERVED__Next->MapKey,                 \
                   MapRESERVED__Map)) {                                         \
         return &MapRESERVED__Entry->MapNext;                                   \
       }                                                                        \

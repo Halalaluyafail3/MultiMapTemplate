@@ -26,7 +26,7 @@
   Qualifiers void MapRemove_##Name(Map_##Name *, MapEntry_##Name **);          \
   Qualifiers void MapClear_##Name(Map_##Name *);
 #define MAP_DEFINITION(Name, Qualifiers, Hash, IsEqual, Allocate, Free)        \
-  static void MapRESERVED__MapRehash_##Name(                                   \
+  Qualifiers void MapRESERVED__MapRehash_##Name(                               \
       Map_##Name *MapRESERVED__Map, size_t MapRESERVED__NewBucketsSize) {      \
     MapEntry_##Name **MapRESERVED__NewBuckets = Allocate(                      \
         MapRESERVED__NewBucketsSize * sizeof(*MapRESERVED__NewBuckets),        \

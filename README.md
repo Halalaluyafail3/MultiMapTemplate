@@ -110,7 +110,7 @@ This header defines the names `MAP_DECLARATION` and `MAP_DEFINITON` as macros, t
 
 # Example
 ```c
-#include "Library/MultiMapTemplate.h"
+#include "MultiMapTemplate.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>

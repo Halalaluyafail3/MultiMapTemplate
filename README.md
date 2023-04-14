@@ -62,6 +62,8 @@ Qualifiers void MapClear_##Name(Map_##Name *)
 
 The map type represents a closed addressing hash table. `MapEntryCount` is the number of entries in the map. `MapBucketsSize` is a power of two greater than or equal to eight, or is zero iff `MapEntryCount` is zero; it represents the sizes of the buckets array. `MapBuckets` is a pointers to the first element in the buckets array, or null if `MapEntryCount` is zero. An empty map will have all three of these members equal to zero, in all other cases all of the members will be non-zero.
 
+Because of how the built in members of `Map_##Name` work, copying each of the built in members works fine as long as the map is not mutated. When the map is mutated, the map used for mutation is the only one that is guaranteed to be valid. Members in the `Extra` argument do not need to obey this.
+
 The entry type represents an entry in a close addressing hash table. `MapNext` is the pointer to the next entry in the bucket, or null if there are no more entries in the bucket. `MapHash` is the hash of the key in the entry. `MapKey` is the key of this entry.
 
 ## Function descriptions

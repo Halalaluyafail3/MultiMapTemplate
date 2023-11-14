@@ -1,11 +1,11 @@
 # MultiMapTemplate
 A header only multimap library using macros in C.
 
-The header defines the two macros `MAP_DECLARATION` and `MAP_DEFINITION` and includes the headers `stdint.h` and `stddef.h`.
+The header defines the three macros `MAP_DECLARATION`, `MAP_DEFINITION`, and `MAP_FUNCTION_DECLARATIONS`, and includes the headers `stdint.h` and `stddef.h`.
 
 This library assumes `typeof` exists, specifically it relies on `typeof(type)`. If `typeof` is not provided by your compiler, it should be defined as a macro which calls your compiler's version of `typeof` (e.g. `#define typeof(...)__typeof__(__VA_ARGS__)`). If `typeof` is not a feature supported by your compiler, it should be defined as `#define typeof(...)__VA_ARGS__` or something equivalent, and the type provided as the type of the keys to `MAP_DECLARATION` shall be constrained: a pointer to this type may be obtained by adding `*` after the type.
 
-The notation `##Name` means that the name provided to `MAP_DECLARATION` or `MAP_DEFINITION` is used as a suffix.
+The notation `##Name` means that the name provided to `MAP_DECLARATION` or `MAP_DEFINITION` is used as a suffix. The macros `MAP_DECLARATION` and `MAP_DEFINITION` are each only allowed to be invoked once in a translation unit with a given name.
 
 An example is provided at the end for how to use this library.
 
@@ -50,7 +50,7 @@ Qualifiers void MapClear_##Name(Map_##Name *)
 
 ## Argument descriptions
 
-`Qualifiers` is used to control the scope of the functions: it should be extern, static, or inline. The meaning of extern, static, and inline are equivalent to what they mean with regular functions.
+`Qualifiers` is used to control the scope of the functions declarations. The meaning of the qualifiers are equivalent to what they mean with regular functions declarations.
 
 `Keys` is the type of the keys, it shall be a complete type and not an array type.
 
@@ -60,21 +60,21 @@ Qualifiers void MapClear_##Name(Map_##Name *)
 
 ## Structure member descriptions
 
-The map type represents a closed addressing hash table. `MapEntryCount` is the number of entries in the map. `MapBucketsSize` is a power of two greater than or equal to eight, or is zero iff `MapEntryCount` is zero; it represents the sizes of the buckets array. `MapBuckets` is a pointers to the first element in the buckets array, or null if `MapEntryCount` is zero. An empty map will have all three of these members equal to zero, in all other cases all of the members will be non-zero.
+The map type represents a closed addressing hash table. `MapEntryCount` is the number of entries in the map. `MapBucketsSize` is a power of two greater than or equal to eight, or is zero iff `MapEntryCount` is zero; it represents the sizes of the buckets array. `MapBuckets` is a pointers to the first element in the buckets array, or null if `MapEntryCount` is zero. Each bucket is a pointer to the first entry of the bucket, or null if there are no entries in the bucket. An empty map will have all three of these members equal to zero, in all other cases these members will be non-zero.
 
 Because of how the built in members of `Map_##Name` work, copying each of the built in members works fine as long as the map is not mutated. When the map is mutated, the map used for mutation is the only one that is guaranteed to be valid. Members in the `Extra` argument do not need to obey this.
 
-The entry type represents an entry in a close addressing hash table. `MapNext` is the pointer to the next entry in the bucket, or null if there are no more entries in the bucket. `MapHash` is the hash of the key in the entry. `MapKey` is the key of this entry.
+The entry type represents an entry in a closed addressing hash table. `MapNext` is the pointer to the next entry in the bucket, or null if there are no more entries in the bucket. `MapHash` is the hash of the key in the entry. `MapKey` is the key of this entry.
 
 ## Function descriptions
 
-`MapFind_##Name` searches for an entry with the given key. If a key is found in the table, a pointer to the next pointer of the previous entry in the bucket is returned, or a pointer to the pointer that points at the entry in the buckets array. If no entry is found, null is returned. If multiple entries have keys that compare equal to the provided key to search for, the earliest entry in the bucket is provided. A pointer to pointer is provided so `MapRemove_##Name` has enough information to remove the entry without having to hash the key again or needing a doubly linked list. These pointers to pointers reference things beyond the entry itself, and are only valid until an entry is added or removed.
+`MapFind_##Name` searches for an entry with the given key. If a key is found in the table, a pointer to the next pointer of the previous entry in the bucket is returned, or a pointer to the pointer that points at the entry in the buckets array. If no entry is found, null is returned. If multiple entries have keys that compare equal to the provided key to search for, the earliest entry in the bucket is returned. A pointer to pointer is returned so `MapRemove_##Name` has enough information to remove the entry without having to hash the key again or needing a doubly linked list. These pointers to pointers reference things beyond the entry itself, and are only valid until an entry is added or removed.
 
-`MapFindNext_##Name` searches for the next entry with the same key as the provided entry. The entry must be in the provided map. The function is similar to `MapFind_##Name`, except it starts searching after the provided entry and the searched key is obtained from the provided entry. If no key is found, null is returned. The order of entries within a bucket shouldn't be relied up, but it can only change when an entry is inserted or removed. This function does not need information about what points at the provided entry, so it only takes a pointer to the entry.
+`MapFindNext_##Name` searches for the next entry with the same key as the provided entry. The entry must be in the provided map. The function is similar to `MapFind_##Name`, except it starts searching after the provided entry and the searched key is obtained from the provided entry. If no entry is found, null is returned. The order of entries within a bucket shouldn't be relied up, but it can only change when an entry is inserted or removed. This function does not need information about what points at the provided entry, so it only takes a pointer to the entry.
 
-`MapAdd_##Name` adds an entry to the table with the provided key. If successful, a pointer similar to the return value of `MapFind_##Name` is returned, or null if unsuccessful. Members specified in the `Value` argument are not initialized by this function.
+`MapAdd_##Name` adds an entry to the table with the provided key. If successful, a pointer similar to the result of `MapFind_##Name` is returned, or null if unsuccessful. Members specified in the `Value` argument are not initialized by this function.
 
-`MapLocate_##Name` converts a pointer to an entry to a pointer to the pointer pointing at the provided entry. The entry must be in the provided map. A pointer to an entry is stable for the life of the entry, so a pointer to an entry can be stored even if elements are added or removed from the map. The purpose of this function is to get the extra information of where an entry is in a map, primarily so it can be removed from the map. Similarly to `MapFind_##Name`, the resulting pointer is only valid until an entry is added or removed from the map.
+`MapLocate_##Name` takes a pointer to an entry and searches through the bucket that it is in to return a pointer similar to the result of `MapFind_##Name`. The entry must be in the provided map. A pointer to an entry is stable for the life of the entry, so a pointer to an entry can be stored even if elements are added or removed from the map. The purpose of this function is to get the extra information of where an entry is in a map, primarily so it can be removed from the map. Similarly to `MapFind_##Name`, the resulting pointer is only valid until an entry is added or removed from the map.
 
 `MapRemove_##Name` removes an entry from the map. This function will never fail. This function takes a pointer to the pointer to the entry so it can quickly remove the entry without needing to search the map.
 
@@ -90,7 +90,7 @@ The entry type represents an entry in a close addressing hash table. `MapNext` i
 
 ## Description
 
-`MAP_DECLARTION` shall be invoked with `Name` prior to invoking `MAP_DEFINITION` in the same translation unit. This macro will provide the definitions to the functions declared in `MAP_DECLARATION`. `Qualifiers` shall be equivalent to `Qualifiers` argument provided to `MAP_DECLARATION`. `Hash`, `IsEqual`, `Allocate`, and `Free` shall be names of functions or function like macros that expand to expressions which evaluate all of their arguments except the Map argument exactly once, properly parenthesize the arguments and operators, and convert the arguments except the Map argument to expected input type by implicit or explicit conversion (e.g. `Free` should accept any pointer to non-constant type).
+Prior to `MAP_DEFINITION` being invoked, `MAP_DECLARATION` shall have been invoked with `Name` in the same translation unit. This macro will provide the definitions to the functions declared in `MAP_DECLARATION`. `Qualifiers` is used to control the scope of the function definitions, and has the same meaning as qualifiers of regular function definitions. `Hash`, `IsEqual`, `Allocate`, and `Free` shall be names of functions or function like macros that expand to expressions which evaluate all of their arguments except the `Map` argument exactly once, properly parenthesize the arguments (except the `Map` argument) and operators, and convert the arguments except the `Map` argument to expected input type by implicit or explicit conversion (e.g. `Free` should accept any pointer to non-constant and non-volatile type).
 
 Synopses for `Hash`, `IsEqual`, `Allocate`, and `Free`:
 ```c
@@ -106,9 +106,53 @@ void Free(void *Block, Map_##Name *Map);
 
 `Allocate` and `Free` shall work like the functions `malloc` and `free` with an extra `Map` argument, except that `Free` need not support being called with a null pointer.
 
+# The MAP_FUNCTION_DECLARATIONS macro
+
+## Synopsis
+
+```c
+#define MAP_FUNCTION_DECLARATIONS(Name, Qualifiers) /* ... */
+```
+
+# Description
+
+Prior to `MAP_FUNCTION_DECLARATIONS` being invoked, `MAP_DECLARATION` shall have been invoked with `Name` in the same translation unit. This macro will declare the functions declare in `MAP_DECLARATION` again. `Qualifiers` is used to control the scope of the function definitions, and has the same meaning as qualifiers of regular function definitions.
+
+# The Qualifiers argument
+
+The purpose of the `Qualifiers` argument is to provide a way of controlling the storage classes of the functions. For example:
+```c
+// in a header
+MAP_DECLARATION(Name, extern, ...)
+// in a source file
+#include "header.h"
+MAP_DEFINITION(Name, extern, ...)
+```
+Here, using `extern` (or nothing) will require that one translation unit use `MAP_DEFINITION` similar to defining an `extern` function. `static` or `static inline` will require that `MAP_DEFINITION` is provided in that translation unit and the function definitions will not be visible. `inline` definitions are more complicated due to how C requires one translation unit to provide an external declaration:
+```c
+// in a header
+#ifndef DECLARATION_QUALIFIERS
+#define DECLARATION_QUALIFIERS inline
+#endif
+MAP_DECLARATION(Name, DECLARATION_QUALIFIERS, ...)
+MAP_DEFINITION(Name, inline, ...)
+// in a source file
+#define DECLARATION_QUALIFIERS extern
+#include "header.h"
+```
+The `MAP_DECLARATION` needs to be used with `extern` (or something equivalent) in the translation unit that provides the external definition, and since `MAP_DECLARATION` can only be invoked once with a given name in a translation unit there needs to be a macro controlling whether extern or inline is used. For this reason, a macro named `MAP_FUNCTION_DECLARATIONS` is provided to make this simpler:
+```c
+// in a header
+MAP_DECLARATION(Name, inline, ...)
+MAP_DEFINITION(Name, inline, ...)
+// in a source file
+#include "header.h"
+MAP_FUNCTION_DECLARATIONS(Name, extern)
+```
+
 # Reserved identifiers
 
-This header defines the names `MAP_DECLARATION` and `MAP_DEFINITON` as macros, these macros shouldn't be defined prior to including the header file. Names used by `MAP_DEFINITION` shouldn't be used as macro names, except `typeof`. Names starting with `MapRESERVED__` are reserved for this header in all contexts.
+This header defines the names `MAP_DECLARATION`, `MAP_DEFINITON`, and `MAP_FUNCTION_DECLARATIONS` as macros, these macros shouldn't be defined prior to including the header file. Names used by `MAP_DECLARATION` shouldn't be used as macro names, except `typeof`. Names starting with `MapRESERVED__` are reserved for this header in all contexts.
 
 # Example
 ```c

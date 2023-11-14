@@ -17,6 +17,7 @@
     size_t MapBucketsSize;                                                     \
     MapEntry_##Name **MapBuckets;                                              \
   };                                                                           \
+  Qualifiers void MapRESERVED__MapRehash_##Name(Map_##Name *, size_t);         \
   Qualifiers MapEntry_##Name **MapFind_##Name(Map_##Name *, MapKey_##Name);    \
   Qualifiers MapEntry_##Name **MapFindNext_##Name(Map_##Name *,                \
                                                   MapEntry_##Name *);          \
@@ -192,8 +193,8 @@
       Free(MapRESERVED__Map->MapBuckets, MapRESERVED__Map);                    \
       MapRESERVED__Map->MapBuckets = 0;                                        \
       MapRESERVED__Map->MapBucketsSize = 0;                                    \
-    } else if (MapRESERVED__Map                                                \
-                   ->MapEntryCount<MapRESERVED__Map->MapBucketsSize>>          \
+    } else if (MapRESERVED__Map->MapEntryCount <                               \
+               MapRESERVED__Map->MapBucketsSize >>                             \
                3) { /* when the ratio of the number of entries to buckets is   \
                        less than 1:8, try to shrink to save space */           \
       MapRESERVED__MapRehash_##Name(MapRESERVED__Map,                          \
@@ -220,4 +221,14 @@
     MapRESERVED__Map->MapBuckets = 0;                                          \
     MapRESERVED__Map->MapBucketsSize = MapRESERVED__Map->MapEntryCount = 0;    \
   }
+#define MAP_FUNCTION_DECLARATIONS(Name, Qualifiers)                            \
+  Qualifiers void MapRESERVED__MapRehash_##Name(Map_##Name *, size_t);         \
+  Qualifiers MapEntry_##Name **MapFind_##Name(Map_##Name *, MapKey_##Name);    \
+  Qualifiers MapEntry_##Name **MapFindNext_##Name(Map_##Name *,                \
+                                                  MapEntry_##Name *);          \
+  Qualifiers MapEntry_##Name **MapAdd_##Name(Map_##Name *, MapKey_##Name);     \
+  Qualifiers MapEntry_##Name **MapLocate_##Name(Map_##Name *,                  \
+                                                MapEntry_##Name *);            \
+  Qualifiers void MapRemove_##Name(Map_##Name *, MapEntry_##Name **);          \
+  Qualifiers void MapClear_##Name(Map_##Name *);
 #endif

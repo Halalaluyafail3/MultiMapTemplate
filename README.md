@@ -5,7 +5,7 @@ The header defines the three macros `MAP_DECLARATION`, `MAP_DEFINITION`, and `MA
 
 This library assumes `typeof` exists, specifically it relies on `typeof(type)`. If `typeof` is not provided by your compiler, it should be defined as a macro which calls your compiler's version of `typeof` (e.g. `#define typeof(...)__typeof__(__VA_ARGS__)`). If `typeof` is not a feature supported by your compiler, it should be defined as `#define typeof(...)__VA_ARGS__` or something equivalent, and the type provided as the type of the keys to `MAP_DECLARATION` shall be constrained: a pointer to this type may be obtained by adding `*` after the type.
 
-The notation `##Name` means that the name provided to `MAP_DECLARATION` or `MAP_DEFINITION` is used as a suffix. The macros `MAP_DECLARATION` and `MAP_DEFINITION` are each only allowed to be invoked once in a translation unit with a given name.
+The notation `##Name` means that the name provided to `MAP_DECLARATION`, `MAP_DEFINITION`, or `MAP_FUNCTION_DECLARATIONS` is used as a suffix. The macros `MAP_DECLARATION` and `MAP_DEFINITION` are each only allowed to be invoked once in a translation unit with a given name.
 
 An example is provided at the end for how to use this library.
 

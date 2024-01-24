@@ -45,7 +45,7 @@ Qualifiers MapEntry_##Name **MapFindNext_##Name(Map_##Name *, MapEntry_##Name *)
 Qualifiers MapEntry_##Name **MapAdd_##Name(Map_##Name *, MapKey_##Name);
 Qualifiers MapEntry_##Name **MapLocate_##Name(Map_##Name *, MapEntry_##Name *);
 Qualifiers void MapRemove_##Name(Map_##Name *, MapEntry_##Name **);
-Qualifiers void MapClear_##Name(Map_##Name *)
+Qualifiers void MapClear_##Name(Map_##Name *);
 ```
 
 ## Argument descriptions
@@ -90,7 +90,7 @@ The entry type represents an entry in a closed addressing hash table. `MapNext` 
 
 ## Description
 
-Prior to `MAP_DEFINITION` being invoked, `MAP_DECLARATION` shall have been invoked with `Name` in the same translation unit. This macro will provide the definitions to the functions declared in `MAP_DECLARATION`. `Qualifiers` is used to control the scope of the function definitions, and has the same meaning as qualifiers of regular function definitions. `Hash`, `IsEqual`, `Allocate`, and `Free` shall be names of functions or function like macros that expand to expressions which evaluate all of their arguments except the `Map` argument exactly once, properly parenthesize the arguments (except the `Map` argument) and operators, and convert the arguments except the `Map` argument to expected input type by implicit or explicit conversion (e.g. `Free` should accept any pointer to non-constant and non-volatile type).
+Prior to `MAP_DEFINITION` being invoked, `MAP_DECLARATION` shall have been invoked with `Name` in the same translation unit. This macro will provide the definitions to the functions declared in `MAP_DECLARATION`. `Qualifiers` is used to control the scope of the function definitions, and has the same meaning as qualifiers of regular function definitions. `Hash`, `IsEqual`, `Allocate`, and `Free` shall be names of functions or function like macros that expand to expressions which evaluate all of their arguments except the `Map` argument exactly once, properly parenthesize the arguments (except the `Map` argument) and operators, and convert the arguments except the `Map` argument to expected input type by implicit or explicit conversion (e.g. `Free` should accept any pointer to non-constant and non-volatile object type).
 
 Synopses for `Hash`, `IsEqual`, `Allocate`, and `Free`:
 ```c
@@ -105,6 +105,10 @@ void Free(void *Block, Map_##Name *Map);
 `Hash` and `IsEqual` shall be pure functions. Keys that compare equal by a test with `IsEqual` shall have equivalent results from `Hash`. `IsEqual` shall work like a comparison function and follow the basic rules of comparison functions, such as being reflexive (`X==X` is always true), symmetric (`X==Y` implies `Y==X`), and transitive (`X==Y&&Y==Z` implies `X==Z`). These rules will only matter for keys that are inserted into the table or searched for.
 
 `Allocate` and `Free` shall work like the functions `malloc` and `free` with an extra `Map` argument, except that `Free` need not support being called with a null pointer.
+
+All invocations of the functions have sequence points between them. The state of the map's structure members is unspecified during an invocation of one of the functions (the structure members should not be changed), the purpose of the `Map` argument is to provide access to the fields defined in the `Extra` argument provided to `MAP_DECLARATION`. None of the functions should be invoked during an invocation of one of the functions, i.e. the functions are not re-entrant. If a macro invocation does not return, there is no safe way to deal with the map. For these reason, using `longjmp` to jump outside of the function call or accessing a global map from a function registered with `atexit`, `signal`, or other similar functions should be avoided.
+
+`MapLocate_##Name` is thread safe and signal safe (none of the provided functions will be invoked). `MapFind_##Name` and `MapFindNext_##Name` are thread safe and signal safe unless the `Hash` and `IsEqual` functions are not thread safe or not signal safe (`Allocate` and `Free` will not be invoked). `MapAdd_##Name`, `MapRemove_##Name`, and `MapClear_##Name` are never thread safe or signal safe and require external synchronization to be used from multiple threads or from inside and outside of a signal handler.
 
 # The MAP_FUNCTION_DECLARATIONS macro
 

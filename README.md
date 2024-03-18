@@ -5,7 +5,9 @@ The header defines the three macros `MAP_DECLARATION`, `MAP_DEFINITION`, and `MA
 
 This library assumes `typeof` exists, specifically it relies on `typeof(type)`. If `typeof` is not provided by your compiler, it should be defined as a macro which calls your compiler's version of `typeof` (e.g. `#define typeof(...)__typeof__(__VA_ARGS__)`). If `typeof` is not a feature supported by your compiler, it should be defined as `#define typeof(...)__VA_ARGS__` or something equivalent, and the type provided as the type of the keys to `MAP_DECLARATION` shall be constrained: a pointer to this type may be obtained by adding `*` after the type.
 
-The notation `##Name` means that the name provided to `MAP_DECLARATION`, `MAP_DEFINITION`, or `MAP_FUNCTION_DECLARATIONS` is used as a suffix. The macros `MAP_DECLARATION` and `MAP_DEFINITION` are each only allowed to be invoked once in a translation unit with a given name.
+The notation `##Name` means that the name provided to `MAP_DECLARATION`, `MAP_DEFINITION`, or `MAP_FUNCTION_DECLARATIONS` is used as a suffix. The macros `MAP_DECLARATION` and `MAP_DEFINITION` are each only allowed to be invoked once in a translation unit with a given name. In C2X/C23 the rules around struct definitions have been relaxed, so in C2X/C23 the restriction that `MAP_DECLARATION` must be invoked only once in a translation unit does not exist. If `MAP_DECLARATION` is invoked multiple times in the same translation unit, all of the arguments except `Qualifiers` need to be the same across the invocations of `MAP_DECLARATION`. The types declared previously may be used in a repeated invocation of `MAP_DECLARATION` to ensure that the types are the same.
+
+`MAP_DEFINITION` shall only be invoked at file scope. `MAP_DECLARATION` and `MAP_FUNCTION_DECLARATIONS` may be invoked in block scope; however, the `Qualifiers` need to be valid for such a case (i.e. no `static`) and prior to C2X/C23 `MAP_DECLARATION` shall still only be invoked once per translation unit (because of the type compatibility rules). As with normal functions, declarations of functions from these macros inside of an inner scope will not modify any declarations in an outer scope.
 
 An example is provided at the end for how to use this library.
 
@@ -22,6 +24,7 @@ An example is provided at the end for how to use this library.
 Declares several structures to represent a map, several functions to manipulate a map, and several typedefs for convenience:
 ```c
 // types are declared in this order, which guarantees which types are complete in certain places
+// the parameters Key, Value, and Extra are guaranteed to only be expanded once
 // typeof(Key) is used so types such as int(*)(int) can be used without a typedef
 typedef struct MapEntry_##Name MapEntry_##Name;
 typedef struct Map_##Name Map_##Name;
@@ -106,7 +109,7 @@ void Free(void *Block, Map_##Name *Map);
 
 `Allocate` and `Free` shall work like the functions `malloc` and `free` with an extra `Map` argument, except that `Free` need not support being called with a null pointer.
 
-All invocations of the functions have sequence points between them. The state of the map's structure members is unspecified during an invocation of one of the functions (the structure members should not be changed), the purpose of the `Map` argument is to provide access to the fields defined in the `Extra` argument provided to `MAP_DECLARATION`. None of the functions should be invoked during an invocation of one of the functions, i.e. the functions are not re-entrant. If a macro invocation does not return, there is no safe way to deal with the map. For these reason, using `longjmp` to jump outside of the function call or accessing a global map from a function registered with `atexit`, `signal`, or other similar functions should be avoided.
+All invocations of the functions have sequence points between them. The state of the map's structure members is unspecified during an invocation of one of the functions (the structure members should not be changed), the purpose of the `Map` argument is to provide access to the fields defined in the `Extra` argument provided to `MAP_DECLARATION`. None of the functions should be invoked during an invocation of one of the functions, i.e. the functions are not re-entrant. If a macro invocation does not return, there is no safe way to deal with the map. For these reasons, using `longjmp` to jump outside of the function call or accessing a global map from a function registered with `atexit`, `signal`, or other similar functions should be avoided.
 
 `MapLocate_##Name` is thread safe and signal safe (none of the provided functions will be invoked). `MapFind_##Name` and `MapFindNext_##Name` are thread safe and signal safe unless the `Hash` and `IsEqual` functions are not thread safe or not signal safe (`Allocate` and `Free` will not be invoked). `MapAdd_##Name`, `MapRemove_##Name`, and `MapClear_##Name` are never thread safe or signal safe and require external synchronization to be used from multiple threads or from inside and outside of a signal handler.
 
@@ -144,7 +147,7 @@ MAP_DEFINITION(Name, inline, ...)
 #define DECLARATION_QUALIFIERS extern
 #include "header.h"
 ```
-The `MAP_DECLARATION` needs to be used with `extern` (or something equivalent) in the translation unit that provides the external definition, and since `MAP_DECLARATION` can only be invoked once with a given name in a translation unit there needs to be a macro controlling whether extern or inline is used. For this reason, a macro named `MAP_FUNCTION_DECLARATIONS` is provided to make this simpler:
+The `MAP_DECLARATION` needs to be used with `extern` (or something equivalent) in the translation unit that provides the external definition, and since `MAP_DECLARATION` can only be invoked once with a given name in a translation unit (prior to C2X/C23) there needs to be a macro controlling whether extern or inline is used. For this reason, a macro named `MAP_FUNCTION_DECLARATIONS` is provided to make this simpler:
 ```c
 // in a header
 MAP_DECLARATION(Name, inline, ...)

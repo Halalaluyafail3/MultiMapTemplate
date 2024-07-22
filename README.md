@@ -55,7 +55,7 @@ Qualifiers void MapClear_##Name(Map_##Name *);
 
 `Qualifiers` is used to control the scope of the functions declarations. The meaning of the qualifiers are equivalent to what they mean with regular functions declarations.
 
-`Keys` is the type of the keys, it shall be a complete type and not an array type.
+`Keys` is the type of the keys, it shall be a complete object type and not an array type.
 
 `Extra` specifies zero or more structure members at the start of `Map_##Name`. A flexible array member shall not be used. This is intended to be used to provide context to the functions provided to `MAP_DEFINITION`, and can be left empty if not needed.
 

@@ -190,7 +190,7 @@ static size_t HashString(const char *String) { // basic string hasher
   }
   return Result;
 }
-// static because we only need it in this file
+// static because it is only needed in this file
 // keys are pointers to null terminated strings
 // each entry gets an associated Value (of type int)
 // and no extra data needs to be stored in the map itself

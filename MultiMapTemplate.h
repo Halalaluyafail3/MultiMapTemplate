@@ -1,8 +1,14 @@
+/* This file is licensed under the "MIT License" Copyright (c) 2022
+   Halalaluyafail3. See the file LICENSE or go to the following for full license
+   details:
+   https://github.com/Halalaluyafail3/MultiMapTemplate/blob/main/LICENSE */
 #ifndef MapRESERVED__MULTIMAPTEMPLATE_H
 #define MapRESERVED__MULTIMAPTEMPLATE_H
 #include <stddef.h>
 #include <stdint.h>
 #define MAP_DECLARATION(Name, Qualifiers, Key, Value, Extra)                   \
+  struct MapEntry_##Name;                                                      \
+  struct Map_##Name;                                                           \
   typedef struct MapEntry_##Name MapEntry_##Name;                              \
   typedef struct Map_##Name Map_##Name;                                        \
   typedef typeof(Key) MapKey_##Name;                                           \

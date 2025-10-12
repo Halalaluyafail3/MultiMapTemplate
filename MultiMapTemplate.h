@@ -1,7 +1,7 @@
 /* This file is licensed under the "MIT License" Copyright (c) 2022
    Halalaluyafail3. See the file LICENSE or go to the following for full license
    details:
-   https://github.com/Halalaluyafail3/MultiMapTemplate/blob/main/LICENSE */
+   https://github.com/Halalaluyafail3/MultiMapTemplate/blob/master/LICENSE */
 #ifndef MapRESERVED__MULTIMAPTEMPLATE_H
 #define MapRESERVED__MULTIMAPTEMPLATE_H
 #include <stddef.h>

@@ -45,7 +45,7 @@
          MapRESERVED__Index != MapRESERVED__NewBucketsSize;                    \
          ++MapRESERVED__Index) {                                               \
       MapRESERVED__NewBuckets[MapRESERVED__Index] = 0;                         \
-    } /* insert all of the old entries into the new table (doesn't preserve    \
+    } /* insert all of the old entries into the new table (does not preserve   \
          any order) */                                                         \
     for (size_t MapRESERVED__Index = 0;                                        \
          MapRESERVED__Index != MapRESERVED__Map->MapBucketsSize;               \
